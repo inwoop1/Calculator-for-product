@@ -6,6 +6,23 @@
     <title>Product Calculator</title>
     <style>
         /* Add your CSS styling here */
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        select {
+            margin-bottom: 15px;
+        }
+
+        button {
+            margin-top: 10px;
+            display: block; /* Make buttons display as block elements */
+        }
+
+        #result {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -82,7 +99,7 @@
 </select>
 
 <!-- Existing Cellphones Dropdown -->
-<label for="existingCellphones">Do you have existing cellphones with Telus or Koodo?</label>
+<label for="existingCellphones">Do you have existing cellphones?</label>
 <select id="existingCellphones">
     <option value="none">None</option>
     <option value="yes">Yes</option>
