@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Calculator</title>
+    <style>
+        /* Add your CSS styling here */
+    </style>
+</head>
+<body>
+
+<h1>Product Calculator</h1>
+
+<!-- Internet Product Pricing -->
+<label for="internet">Internet:</label>
+<select id="internet">
+    <option value="none">None</option>
+    <option value="250">250 Mbps</option>
+    <option value="500">500 Mbps</option>
+    <option value="1000">1 Gbps</option>
+    <option value="1500">1.5 Gbps</option>
+    <option value="3000">3 Gbps</option>
+</select>
+
+<!-- TV Product Pricing -->
+<label for="tv">TV:</label>
+<select id="tv">
+    <option value="none">None</option>
+    <option value="core">Core</option>
+    <option value="corePlus1">Core +1</option>
+    <option value="youPick3">You Pick 3</option>
+    <option value="youPick4Plus1">You Pick 4+1</option>
+    <option value="youPick7Plus1">You Pick 7+1</option>
+    <option value="youPick11Plus2">You Pick 11+2</option>
+</select>
+
+<!-- How many TV boxes -->
+<label for="tvBoxes">How many TV boxes:</label>
+<select id="tvBoxes">
+    <option value="1">1 (0$)</option>
+    <option value="2">2 ($10)</option>
+    <option value="3">3 ($20)</option>
+    <option value="4">4 ($30)</option>
+    <option value="5">5 ($40)</option>
+</select>
+
+<!-- Free TV box -->
+<label for="freeTvBox">Free TV box?</label>
+<select id="freeTvBox">
+    <option value="yes">Yes (-10$)</option>
+    <option value="no">No (0$)</option>
+</select>
+
+<!-- Home Phone Product Pricing -->
+<label for="phone">Home Phone:</label>
+<select id="phone">
+    <option value="none">None</option>
+    <option value="lite">Lite</option>
+    <option value="full">Full</option>
+</select>
+
+<!-- Home Phone Addons -->
+<label for="homePhoneAddon">Home Phone Addons:</label>
+<select id="homePhoneAddon">
+    <option value="none">None</option>
+    <option value="world">World ($25)</option>
+    <option value="asia">Asia ($7)</option>
+    <option value="us">US ($17)</option>
+    <option value="usCan300">300 US/CAN ($9)</option>
+</select>
+
+<!-- Security Product Pricing -->
+<label for="security">Security:</label>
+<select id="security">
+    <option value="none">None</option>
+    <option value="sap">Sap</option>
+    <option value="secure">Secure</option>
+    <option value="securePlusVideo">Secure plus Video</option>
+    <option value="control">Control</option>
+    <option value="controlPlusVideo">Control plus Video</option>
+</select>
+
+<!-- Existing Cellphones Dropdown -->
+<label for="existingCellphones">Do you have existing cellphones with Telus or Koodo?</label>
+<select id="existingCellphones">
+    <option value="none">None</option>
+    <option value="yes">Yes</option>
+    <option value="no">No</option>
+</select>
+
+<!-- Buttons to Calculate Prices -->
+<button onclick="calculateProductPrice()">Calculate Product Price</button>
+<button onclick="calculateWholeHomePrice()">Calculate Whole Home Price</button>
+<button onclick="calculateWholeHomeWithPhonePrice()">Calculate Whole Home with Phone Price</button>
+
+<!-- Display Result -->
+<p id="result"></p>
+
+<script>
+    // Placeholder prices (replace with your actual prices)
+    const internetPrices = {
+        "none": 0,
+        "250": 75,
+        "500": 85,
+        "1000": 65,
+        "1500": 75,
+        "3000": 85
+    };
+
+    const tvPrices = {
+        "none": 0,
+        "core": 25,
+        "corePlus1": 40,
+        "youPick3": 48,
+        "youPick4Plus1": 68,
+        "youPick7Plus1": 83,
+        "youPick11Plus2": 113
+    };
+
+    const phonePrices = {
+        "none": 0,
+        "lite": 13,
+        "full": 23
+    };
+
+    const homePhoneAddonPrices = {
+        "none": 0,
+        "world": 25,
+        "asia": 7,
+        "us": 17,
+        "usCan300": 9
+    };
+
+    const securityPrices = {
+        "none": 0,
+        "sap": 35,
+        "secure": 42,
+        "securePlusVideo": 52,
+        "control": 52,
+        "controlPlusVideo": 59
+    };
+
+    const discountAmount = 10; // Discount amount for both Internet and Security
+    const internetBillCredit = 90;
+    const tvBillCredit = 100;
+    const securityBillCredit = 100;
+
+    function calculateProductPrice() {
+        // Fetch selected values from the dropdowns
+        const internetPrice = applyDiscount(internetPrices[document.getElementById('internet').value], 'internet');
+        const tvPrice = tvPrices[document.getElementById('tv').value];
+        const phonePrice = phonePrices[document.getElementById('phone').value];
+        const securityPrice = applyDiscount(securityPrices[document.getElementById('security').value], 'security');
+        const homePhoneAddonPrice = homePhoneAddonPrices[document.getElementById('homePhoneAddon').value];
+        const tvBoxesPrice = tvBoxesPrices[document.getElementById('tvBoxes').value];
+        const freeTvBoxDiscount = freeTvBoxDiscounts[document.getElementById('freeTvBox').value];
+
+        // Calculate total price for one product
+        const totalPrice = internetPrice + tvPrice + phonePrice + securityPrice + homePhoneAddonPrice + tvBoxesPrice + freeTvBoxDiscount;
+        const billCredits = calculateBillCredits();
+
+        // Display result
+        document.getElementById('result').innerHTML = `Total Price: $${totalPrice.toFixed(2)}<br>Bill Credits: $${billCredits.toFixed(2)}`;
+    }
+
+    function calculateWholeHomePrice() {
+        // Fetch selected values from the dropdowns
+        const internetPrice = applyDiscount(internetPrices[document.getElementById('internet').value], 'internet');
+        const tvPrice = tvPrices[document.getElementById('tv').value];
+        const securityPrice = applyDiscount(securityPrices[document.getElementById('security').value], 'security');
+
+        // Calculate total price for whole home (TV, Internet, Security - 13)
+        const totalPrice = internetPrice + tvPrice + securityPrice - 13;
+        const billCredits = calculateBillCredits();
+
+        // Display result
+        document.getElementById('result').innerHTML = `Total Price for Whole Home: $${totalPrice.toFixed(2)}<br>Bill Credits: $${billCredits.toFixed(2)}`;
+    }
+
+    function calculateWholeHomeWithPhonePrice() {
+        // Fetch selected values from the dropdowns
+        const internetPrice = applyDiscount(internetPrices[document.getElementById('internet').value], 'internet');
+        const tvPrice = tvPrices[document.getElementById('tv').value];
+        const phonePrice = phonePrices[document.getElementById('phone').value];
+        const securityPrice = applyDiscount(securityPrices[document.getElementById('security').value], 'security');
+        const homePhoneAddonPrice = homePhoneAddonPrices[document.getElementById('homePhoneAddon').value];
+        const tvBoxesPrice = tvBoxesPrices[document.getElementById('tvBoxes').value];
+        const freeTvBoxDiscount = freeTvBoxDiscounts[document.getElementById('freeTvBox').value];
+
+        // Calculate total price for whole home with phone (TV, Internet, Security, Phone - 13)
+        const totalPrice = internetPrice + tvPrice + phonePrice + securityPrice + homePhoneAddonPrice - 13 + tvBoxesPrice + freeTvBoxDiscount;
+        const billCredits = calculateBillCredits();
+
+        // Display result
+        document.getElementById('result').innerHTML = `Total Price for Whole Home with Phone: $${totalPrice.toFixed(2)}<br>Bill Credits: $${billCredits.toFixed(2)}`;
+    }
+
+    function calculateBillCredits() {
+        // Fetch selected values from the dropdowns
+        const internetSelection = document.getElementById('internet').value;
+        const tvSelection = document.getElementById('tv').value;
+        const securitySelection = document.getElementById('security').value;
+
+        let billCredits = 0;
+
+        // Add bill credits for selected options (except for "none" and "Sap")
+        if (internetSelection !== 'none') {
+            billCredits += internetBillCredit;
+        }
+
+        if (tvSelection !== 'none') {
+            billCredits += tvBillCredit;
+        }
+
+        if (securitySelection !== 'none' && securitySelection !== 'sap') {
+            billCredits += securityBillCredit;
+        }
+
+        return billCredits;
+    }
+
+    function applyDiscount(price, productType) {
+        // Fetch selected value from the discount dropdown
+        const hasExistingCellphones = document.getElementById('existingCellphones').value;
+
+        // Exclude the "None" option from discounts
+        if (document.getElementById(productType).value === 'none') {
+            return price;
+        }
+
+        // Apply discount if applicable
+        if (hasExistingCellphones === 'yes' && productType === 'internet') {
+            return price - discountAmount;
+        } else if (hasExistingCellphones === 'yes' && productType === 'security') {
+            return price - discountAmount;
+        }
+
+        return price;
+    }
+
+    // Prices for TV boxes and Free TV box discounts
+    const tvBoxesPrices = {
+        "1": 0,
+        "2": 10,
+        "3": 20,
+        "4": 30,
+        "5": 40
+    };
+
+    const freeTvBoxDiscounts = {
+        "yes": -10,
+        "no": 0
+    };
+</script>
+
+</body>
+</html>
